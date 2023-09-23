@@ -12,5 +12,7 @@ Grafo::~Grafo() {};
 
 int Grafo::peso(int u, int v)
 {
+    std::pair<int, int> par(u, v);
+    std::iterator finded = arestas.find(par);
     return INFINITO;
 }

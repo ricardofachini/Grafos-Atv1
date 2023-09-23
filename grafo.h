@@ -1,4 +1,8 @@
+#ifndef GRAFO_H
+#define GRAFO_H
+
 #include <vector>
+#include <stdint.h>
 #include <string>
 #include <iostream>
 #include <map>
@@ -28,3 +32,5 @@ class Grafo
         std::map<std::pair<int, int>, int> arestas;
 
 };
+#endif
+
