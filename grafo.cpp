@@ -1,18 +1,55 @@
 #include "grafo.h"
+#include <fstream>
+
 
 // construtor, lê o arquivo
-Grafo::Grafo(std::string arquivo)
+Grafo::Grafo(char *nome_arquivo)
 {
-    std::cout << arquivo << "\n";
-    std::cout << INFINITO << std::endl;
+    std::ifstream arquivo; // c++ stream para leitura de arquivo
+    arquivo.open(nome_arquivo);
+    std::string linha;
+
+    // le o arquivo
+    if (arquivo.is_open()) {
+        bool le_vertice = false;
+        bool le_aresta = false;
+        while (arquivo) {
+            std::getline (arquivo, linha); // carrega uma linha do arquivo na variável linha
+
+            if (le_vertice == true) {
+                // adiciona vertice ao grafo
+                std::pair<int, int> vertice( linha.front()-48, linha.back()-48 );  // subtrai 48 porque characteres em c++ tem indice '0' para 48, '1' para 49, etc.
+                vertices.push_back(vertice);
+            }
+
+            if (le_aresta == true) {
+                // adiciona aresta ao grafo
+                std::pair<int, int> aresta( linha.substr(0, 3).front()-48, linha.substr(0, 3).back()-48 );
+                int peso = linha.back() - 48;
+                arestas[aresta] = peso;
+            }
+
+            if (linha.find("*vertices") != std::string::npos) {  // verifica se a linha atual dita os vertices
+                le_vertice = true;
+            }
+
+            if (linha.find("*edges") != std::string::npos) { // verifica se a linha atual dita as arestas
+                le_vertice = false;
+                le_aresta = true;
+            }
+        }
+    }
 }
 
 // destrutor
-Grafo::~Grafo() {};
+Grafo::~Grafo() {}
 
 int Grafo::peso(int u, int v)
 {
-    std::pair<int, int> par(u, v);
-    std::iterator finded = arestas.find(par);
-    return INFINITO;
+    int peso = arestas[{u, v}];
+    if (peso == 0)  {
+        return INFINITO;
+    } else {
+        return peso;
+    }
 }

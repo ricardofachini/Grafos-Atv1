@@ -13,7 +13,7 @@
 class Grafo
 {
     public:
-        Grafo(std::string arquivo);  // construtor
+        Grafo(char *nome_arquivo);  // construtor
         ~Grafo(); // destrutor
 
         // retorna numero de vertices
@@ -28,8 +28,8 @@ class Grafo
         bool haAresta(int u, int v);
         int peso(int u, int v);
     private:
-        std::vector<int> vertices;
-        std::map<std::pair<int, int>, int> arestas;
+        std::vector<std::pair<int, int>> vertices; // vetor de pares <indice, rotulo>
+        std::map<std::pair<int, int>, int> arestas; // map de pares <vertice sainte, vertice entrante> para um valor: peso
 
 };
 #endif
