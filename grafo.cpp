@@ -72,6 +72,7 @@ int Grafo::rotulo(int v)
             return vertice.second;
         }
     }
+    return 0;
 }
 
 int Grafo::grau(int vertice)
@@ -88,9 +89,51 @@ int Grafo::grau(int vertice)
 bool Grafo::haAresta(int u, int v)
 {
     for (auto& aresta: arestas) {
-        if (aresta.first.first == u && aresta.first.second == v || aresta.first.first == v && aresta.first.second == u) {
+        if ((aresta.first.first == u && aresta.first.second == v) || (aresta.first.first == v && aresta.first.second == u)) {
             return true;
         }
     }
     return false;
+}
+
+// retorna um vetor de indices dos vertices vizinhos ao v
+std::vector<int> Grafo::vizinhos(int v)
+{
+    std::vector<int> vizinhos;
+    for (auto& aresta: arestas) {
+        if (aresta.first.first == v) {
+            vizinhos.push_back(aresta.first.second);
+        }
+        if (aresta.first.second == v) {
+            vizinhos.push_back(aresta.first.first);
+        }
+    }
+    return vizinhos;
+}
+
+
+void Grafo::buscaLargura(int s)
+{
+    std::deque<int> *fila;
+    std::vector<int> *visitados;
+    int nivel = 0;
+    visitados->push_back(s);
+    fila->push_back(s);
+    std::cout << nivel << ": " << s << "\n";
+    while (fila->size() != 0) {
+        nivel++;
+        int v = fila->front();
+        fila->pop_front();
+        auto vizinhos_de_v = vizinhos(v);
+        for (auto& vizinho: vizinhos_de_v) {
+            if ( std::find(vizinhos_de_v.begin(), vizinhos_de_v.end(), vizinho) != vizinhos_de_v.end() ) {
+                visitados->push_back(vizinho);
+            } else {
+                visitados->push_back(vizinho);
+                fila->push_back(vizinho);
+            }
+        }
+        std::cout << nivel << ": " << v << "\n";
+    }
+
 }

@@ -2,6 +2,7 @@
 #define GRAFO_H
 
 #include <vector>
+#include <deque>
 #include <stdint.h>
 #include <string>
 #include <iostream>
@@ -27,6 +28,10 @@ class Grafo
         std::vector<int> vizinhos(int vertice);
         bool haAresta(int u, int v);
         int peso(int u, int v);
+
+        //algoritmos:
+        // questão 2:
+        void buscaLargura(int origem);
     private:
         std::vector<std::pair<int, int>> vertices; // vetor de pares <indice, rotulo>
         std::map<std::pair<int, int>, int> arestas; // map de pares <vertice sainte, vertice entrante> para um valor: peso
