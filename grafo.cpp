@@ -1,5 +1,6 @@
 #include "grafo.h"
 #include <fstream>
+#include <algorithm>
 
 
 // construtor, lê o arquivo
@@ -52,4 +53,44 @@ int Grafo::peso(int u, int v)
     } else {
         return peso;
     }
+}
+
+int Grafo::qtdVertices()
+{
+    return vertices.size();
+}
+
+int Grafo::qtdArestas()
+{
+    return arestas.size();
+}
+
+int Grafo::rotulo(int v)
+{
+    for (auto vertice: vertices) {
+        if (vertice.first == v) {
+            return vertice.second;
+        }
+    }
+}
+
+int Grafo::grau(int vertice)
+{
+    int grau = 0;
+    for (const auto& aresta : arestas) {
+        if (aresta.first.first == vertice || aresta.first.second == vertice) {
+            grau++;
+        }
+    }
+    return grau;
+}
+
+bool Grafo::haAresta(int u, int v)
+{
+    for (auto& aresta: arestas) {
+        if (aresta.first.first == u && aresta.first.second == v || aresta.first.first == v && aresta.first.second == u) {
+            return true;
+        }
+    }
+    return false;
 }
