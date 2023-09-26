@@ -54,6 +54,6 @@
 
 # Project specific
 *.net
-./exec
+/exec
 
 # 
