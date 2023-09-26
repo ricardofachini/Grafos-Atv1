@@ -17,6 +17,20 @@ Grafo::Grafo(char *nome_arquivo)
         while (arquivo) {
             std::getline (arquivo, linha); // carrega uma linha do arquivo na variável linha
 
+            if (linha.find("*vertices") != std::string::npos) {  // verifica se a linha atual dita os vertices
+                le_vertice = true;
+                continue;
+            }
+
+            if (linha.find("*edges") != std::string::npos) { // verifica se a linha atual dita as arestas
+                le_vertice = false;
+                le_aresta = true;
+                continue;
+            }
+            if (linha == "") {
+                break;
+            }
+
             if (le_vertice == true) {
                 // adiciona vertice ao grafo
                 std::pair<int, int> vertice( linha.front()-48, linha.back()-48 );  // subtrai 48 porque characteres em c++ tem indice '0' para 48, '1' para 49, etc.
@@ -25,29 +39,34 @@ Grafo::Grafo(char *nome_arquivo)
 
             if (le_aresta == true) {
                 // adiciona aresta ao grafo
-                std::pair<int, int> aresta( linha.substr(0, 3).front()-48, linha.substr(0, 3).back()-48 );
-                int peso = linha.back() - 48;
-                arestas[aresta] = peso;
-            }
-
-            if (linha.find("*vertices") != std::string::npos) {  // verifica se a linha atual dita os vertices
-                le_vertice = true;
-            }
-
-            if (linha.find("*edges") != std::string::npos) { // verifica se a linha atual dita as arestas
-                le_vertice = false;
-                le_aresta = true;
+                //std::pair<int, int> aresta( linha.substr(0, 3).front()-48, linha.substr(0, 3).back()-48 );
+                Aresta *aresta = new Aresta();
+                aresta->vertice1 = linha.substr(0, 3).front()-48;
+                aresta->vertice2 = linha.substr(0, 3).back()-48;
+                aresta->peso = linha.back() - 48;
+                arestas.push_back(aresta);
             }
         }
     }
 }
 
 // destrutor
-Grafo::~Grafo() {}
+Grafo::~Grafo() {
+    // desaloca memória das arestas
+    for (auto& aresta: arestas) {
+        delete aresta;
+    }
+}
 
 int Grafo::peso(int u, int v)
 {
-    int peso = arestas[{u, v}];
+    int peso = 0;
+    for (const Aresta *aresta: arestas)
+        if ((aresta->vertice1 == u && aresta->vertice2 == v) ||
+                (aresta->vertice1 == v && aresta->vertice2 == u)) {
+                    peso = aresta->peso;
+                    break;
+        }
     if (peso == 0)  {
         return INFINITO;
     } else {
@@ -67,7 +86,7 @@ int Grafo::qtdArestas()
 
 int Grafo::rotulo(int v)
 {
-    for (auto vertice: vertices) {
+    for (auto& vertice: vertices) {
         if (vertice.first == v) {
             return vertice.second;
         }
@@ -79,7 +98,7 @@ int Grafo::grau(int vertice)
 {
     int grau = 0;
     for (const auto& aresta : arestas) {
-        if (aresta.first.first == vertice || aresta.first.second == vertice) {
+        if (aresta->vertice1 == vertice || aresta->vertice2 == vertice) {
             grau++;
         }
     }
@@ -89,7 +108,7 @@ int Grafo::grau(int vertice)
 bool Grafo::haAresta(int u, int v)
 {
     for (auto& aresta: arestas) {
-        if ((aresta.first.first == u && aresta.first.second == v) || (aresta.first.first == v && aresta.first.second == u)) {
+        if ((aresta->vertice1 == u && aresta->vertice2 == v) || (aresta->vertice1 == v && aresta->vertice2 == u)) {
             return true;
         }
     }
@@ -101,16 +120,15 @@ std::vector<int> Grafo::vizinhos(int v)
 {
     std::vector<int> vizinhos;
     for (auto& aresta: arestas) {
-        if (aresta.first.first == v) {
-            vizinhos.push_back(aresta.first.second);
+        if (aresta->vertice1 == v) {
+            vizinhos.push_back(aresta->vertice2);
         }
-        if (aresta.first.second == v) {
-            vizinhos.push_back(aresta.first.first);
+        if (aresta->vertice2 == v) {
+            vizinhos.push_back(aresta->vertice1);
         }
     }
     return vizinhos;
 }
-
 
 void Grafo::buscaLargura(int s)
 {
@@ -137,3 +155,27 @@ void Grafo::buscaLargura(int s)
     }
 
 }
+
+// std::tuple<bool, std::vector<int>> Grafo::hierholzer()
+// {
+//     for (auto& aresta: arestas) {
+//         aresta = false; // corrigir
+//     }
+//     int v = vertices(2);
+//     bool r;
+//     std::vector<int> ciclo;
+//     std::tuple<bool, std::vector<int>> subciclo = buscaSubciclo();
+//     r = std::get<0>(subciclo);
+//     ciclo = std::get<1>(subciclo);
+//     if (r == false) {
+//         return false;
+//     } else {
+//         if 
+//     }
+
+// }
+
+// std::tuple<bool, std::vector<int>> buscaSubciclo()
+// {
+
+// }

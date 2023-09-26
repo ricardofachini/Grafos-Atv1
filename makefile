@@ -9,7 +9,7 @@ exec: main.o grafo.o
 main.o:	main.cpp grafo.h
 	$(CC) $(CFLAGS) main.cpp -o main.o -c
 
-grafo.o: grafo.cpp grafo.h
+grafo.o: grafo.cpp grafo.h aresta.h
 	$(CC) $(CFLAGS) grafo.cpp -o grafo.o -c
 
 run:

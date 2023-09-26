@@ -7,6 +7,8 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <tuple>
+#include "aresta.h"
 #define INFINITO INT32_MAX
 
 
@@ -32,9 +34,10 @@ class Grafo
         //algoritmos:
         // questão 2:
         void buscaLargura(int origem);
+        std::tuple<bool, std::vector<int>> hierholzer();
     private:
         std::vector<std::pair<int, int>> vertices; // vetor de pares <indice, rotulo>
-        std::map<std::pair<int, int>, int> arestas; // map de pares <vertice sainte, vertice entrante> para um valor: peso
+        std::vector<Aresta*> arestas; // map de pares <vertice sainte, vertice entrante> para um valor: peso
 
 };
 #endif
