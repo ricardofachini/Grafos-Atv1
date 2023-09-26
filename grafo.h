@@ -34,6 +34,7 @@ class Grafo
         //algoritmos:
         // questão 2:
         void buscaLargura(int origem);
+        
         std::tuple<bool, std::vector<int>> hierholzer();
     private:
         std::vector<std::pair<int, int>> vertices; // vetor de pares <indice, rotulo>
