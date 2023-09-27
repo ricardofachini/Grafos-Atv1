@@ -1,6 +1,7 @@
 #include "grafo.h"
 #include <fstream>
 #include <algorithm>
+#include <limits>
 
 
 // construtor, lê o arquivo
@@ -43,7 +44,7 @@ Grafo::Grafo(char *nome_arquivo)
                 Aresta *aresta = new Aresta();
                 aresta->vertice1 = linha.substr(0, 3).front()-48;
                 aresta->vertice2 = linha.substr(0, 3).back()-48;
-                aresta->peso = linha.back() - 48;
+                aresta->peso = std::stoi(linha.substr(4));
                 arestas.push_back(aresta);
             }
         }
@@ -58,6 +59,7 @@ Grafo::~Grafo() {
     }
 }
 
+// retorna o peso da aresta entre (int: u) e (int: v)
 int Grafo::peso(int u, int v)
 {
     int peso = 0;
@@ -162,29 +164,115 @@ void Grafo::buscaLargura(int s)
         }
         encontrados_no_nivel.clear();
     }
-
 }
 
 // std::tuple<bool, std::vector<int>> Grafo::hierholzer()
 // {
+//     std::vector<int> empty; // vetor vazio (representa null)
 //     for (auto& aresta: arestas) {
-//         aresta = false; // corrigir
+//         aresta->visitada = false;
 //     }
-//     int v = vertices(2);
+//     int v = vertices.at(2).first;
 //     bool r;
 //     std::vector<int> ciclo;
-//     std::tuple<bool, std::vector<int>> subciclo = buscaSubciclo();
+//     std::tuple<bool, std::vector<int>> subciclo = buscaSubciclo(v);
 //     r = std::get<0>(subciclo);
 //     ciclo = std::get<1>(subciclo);
 //     if (r == false) {
-//         return false;
+//         return std::make_tuple(false, empty);
 //     } else {
-//         if 
+//         for (auto& aresta: arestas)  {
+//             if (aresta->visitada == false) {
+//                 return std::make_tuple(false, empty);
+//             }
+//         }
+//         return std::make_tuple(true, ciclo);
 //     }
-
 // }
 
-// std::tuple<bool, std::vector<int>> buscaSubciclo()
+// std::tuple<bool, std::vector<int>> Grafo::buscaSubciclo(int v)
 // {
+//     int t = v;
+//     std::vector<int> vizinhos_v = vizinhos(v);
+//     std::vector<int> ciclo = {v};
+//     do
+//     {
+//         for (auto& vizinho: vizinhos_v) {
+//             if (vizinho) {
 
+//             } else {
+//                 for (auto& aresta: arestas) {
+//                     if (aresta->visitada == false) {
+//                         aresta->visitada = true;
+//                         v = aresta->vertice2;
+//                         ciclo.push_back(v);
+//                         break;
+//                     }
+//                 }
+//             }
+//         }
+//     } while (v != t);
+    
 // }
+
+
+void Grafo::dijkstra(int s)
+{
+    std::vector<int> visitados(vertices.size(), -1);
+    std::vector<int> distancia(vertices.size(), INFINITO);
+    //std::deque<int> empty;
+    std::vector<int> predecessores(vertices.size(), 0);
+    //predecessores[s-1] = -1;
+    distancia[s-1] = 0;
+
+    for (auto& vertice: vertices) {
+        // vertice nao foi visitado
+        int u = encontrarDistanciaMinima(distancia, visitados) + 1;
+        visitados[u-1] = 1;
+        std::vector<int> vizinhos_de_u = vizinhos(u);
+
+        // pega um vizinho de u
+        for (auto& v: vizinhos_de_u) {
+            if (visitados[v-1] == -1 && haAresta(u, v)) {
+                int peso_de_u_ate_v = peso(u, v);
+                if (distancia[u-1] != INFINITO && distancia[u-1] + peso_de_u_ate_v < distancia[v-1]) {
+                    distancia[v-1] = distancia[u-1] + peso_de_u_ate_v;
+                    predecessores[v-1] = u;
+                }
+            }
+        }
+    }
+
+    std::map<int, std::vector<int>> caminhos;
+    for (int dest = 0; dest < vertices.size(); dest++) {
+        std::deque<int> caminho; // caminho ate o destino atual da iteração
+        int atual = dest;
+        while (atual != -1)
+        {
+            caminho.push_front(atual+1);
+            int& front = (predecessores[atual]);
+            atual = front-1;
+        }
+
+        std::cout << (dest+1) << ": ";
+        for (int v: caminho) {
+            std::cout << v << ",";
+        }
+        std::cout << " d: " << distancia[dest] << "\n";
+    }
+    std::cout << std::endl;
+}
+
+int Grafo::encontrarDistanciaMinima(std::vector<int>& distancia, std::vector<int>& visitados)
+{
+    int minimo = INFINITO;
+    int indice_minimo = -1;
+
+    for (int i = 0; i < vertices.size(); i++) {
+        if (visitados[i] == -1 && distancia[i] <= minimo) {
+            minimo = distancia[i];
+            indice_minimo = i;
+        }
+    }
+    return indice_minimo;
+}
