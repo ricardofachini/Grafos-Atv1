@@ -7,6 +7,7 @@ int main() {
     std::cout << grafo1->qtdVertices() << std::endl;
     std::cout << grafo1->qtdArestas() << std::endl;
     auto viz = grafo1->vizinhos(4);
+    grafo1->buscaLargura(4);
     delete grafo1;
     return 0;
 }

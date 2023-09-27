@@ -132,26 +132,35 @@ std::vector<int> Grafo::vizinhos(int v)
 
 void Grafo::buscaLargura(int s)
 {
-    std::deque<int> *fila;
-    std::vector<int> *visitados;
+    std::deque<int> fila;
+    std::vector<int> visitados;
     int nivel = 0;
-    visitados->push_back(s);
-    fila->push_back(s);
+    visitados.push_back(s);
+    fila.push_back(s);
     std::cout << nivel << ": " << s << "\n";
-    while (fila->size() != 0) {
-        nivel++;
-        int v = fila->front();
-        fila->pop_front();
+    while (fila.size() != 0) {
+        std::vector<int> encontrados_no_nivel;
+        int v = fila.front();
+        fila.pop_front();
         auto vizinhos_de_v = vizinhos(v);
         for (auto& vizinho: vizinhos_de_v) {
-            if ( std::find(vizinhos_de_v.begin(), vizinhos_de_v.end(), vizinho) != vizinhos_de_v.end() ) {
-                visitados->push_back(vizinho);
-            } else {
-                visitados->push_back(vizinho);
-                fila->push_back(vizinho);
+            if ( std::find(visitados.begin(), visitados.end(), vizinho) == visitados.end() ) {
+                visitados.push_back(vizinho);
+                fila.push_back(vizinho);
+                encontrados_no_nivel.push_back(vizinho);
             }
         }
-        std::cout << nivel << ": " << v << "\n";
+        if (encontrados_no_nivel.size() != 0) {
+            nivel++;
+            std::cout << nivel << ": ";
+        }
+        for (auto& visitado: encontrados_no_nivel) {
+            std::cout << visitado << ",";
+        }
+        if (encontrados_no_nivel.size() != 0) {
+            std::cout << "\n";
+        }
+        encontrados_no_nivel.clear();
     }
 
 }
