@@ -8,7 +8,6 @@ class Aresta
         int vertice1;
         int vertice2;
         int peso;
-        bool visitada = false;
 };
 
 #endif

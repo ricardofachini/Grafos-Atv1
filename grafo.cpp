@@ -134,6 +134,7 @@ std::vector<int> Grafo::vizinhos(int v)
 
 void Grafo::buscaLargura(int s)
 {
+    std::cout << "Algoritmo de busca em largura - DFS\n";
     std::deque<int> fila;
     std::vector<int> visitados;
     int nivel = 0;
@@ -164,69 +165,61 @@ void Grafo::buscaLargura(int s)
         }
         encontrados_no_nivel.clear();
     }
+    std::cout << std::endl;
 }
 
-// std::tuple<bool, std::vector<int>> Grafo::hierholzer()
-// {
-//     std::vector<int> empty; // vetor vazio (representa null)
-//     for (auto& aresta: arestas) {
-//         aresta->visitada = false;
-//     }
-//     int v = vertices.at(2).first;
-//     bool r;
-//     std::vector<int> ciclo;
-//     std::tuple<bool, std::vector<int>> subciclo = buscaSubciclo(v);
-//     r = std::get<0>(subciclo);
-//     ciclo = std::get<1>(subciclo);
-//     if (r == false) {
-//         return std::make_tuple(false, empty);
-//     } else {
-//         for (auto& aresta: arestas)  {
-//             if (aresta->visitada == false) {
-//                 return std::make_tuple(false, empty);
-//             }
-//         }
-//         return std::make_tuple(true, ciclo);
-//     }
-// }
+void Grafo::floyd_warshall()
+{
+    std::cout << "Algoritmo de floyd-warshall\n";
+    int num_vertices = vertices.size();
+    std::vector<std::vector<int>> distancias(num_vertices, std::vector<int>(num_vertices, INFINITO));
 
-// std::tuple<bool, std::vector<int>> Grafo::buscaSubciclo(int v)
-// {
-//     int t = v;
-//     std::vector<int> vizinhos_v = vizinhos(v);
-//     std::vector<int> ciclo = {v};
-//     do
-//     {
-//         for (auto& vizinho: vizinhos_v) {
-//             if (vizinho) {
+    for (int i = 0; i < num_vertices; i++) {
+        distancias[i][i] = 0;
+    }
 
-//             } else {
-//                 for (auto& aresta: arestas) {
-//                     if (aresta->visitada == false) {
-//                         aresta->visitada = true;
-//                         v = aresta->vertice2;
-//                         ciclo.push_back(v);
-//                         break;
-//                     }
-//                 }
-//             }
-//         }
-//     } while (v != t);
-    
-// }
+    for (auto& aresta : arestas) {
+        int u = aresta->vertice1;
+        int v = aresta->vertice2;
+        int peso_entre_u_ate_v = aresta->peso;
+        distancias[u-1][v-1] = peso_entre_u_ate_v;
+        distancias[v-1][u-1] = peso_entre_u_ate_v; // grafo não direcionado
+    }
 
+    for (int k = 0; k < num_vertices; k++) {
+        for (int i = 0; i < num_vertices; i++) {
+            for (int j = 0; j < num_vertices; j++) {
+                if (distancias[i][k] != INFINITO &&  distancias[k][j] != INFINITO &&
+                    ( distancias[i][k] + distancias[k][j]) < distancias[i][j] ) {
+                    distancias[i][j] = distancias[i][k] + distancias[k][j];
+                }
+            }
+        }
+    }
+
+    // Imprimir as distâncias
+    for (int i = 0; i < num_vertices; i++) {
+        std::cout << i+1 << ":";
+        for (int j = 0; j < num_vertices; j++) {
+            if (distancias[i][j] == INFINITO) {
+                std::cout << "Infinito";
+            } else {
+                std::cout << distancias[i][j] << ",";
+            }
+        }
+        std::cout << std::endl;
+    }
+}
 
 void Grafo::dijkstra(int s)
 {
+    std::cout << "Algoritmo de dijkstra\n";
     std::vector<int> visitados(vertices.size(), -1);
     std::vector<int> distancia(vertices.size(), INFINITO);
-    //std::deque<int> empty;
     std::vector<int> predecessores(vertices.size(), 0);
-    //predecessores[s-1] = -1;
     distancia[s-1] = 0;
 
     for (auto& vertice: vertices) {
-        // vertice nao foi visitado
         int u = encontrarDistanciaMinima(distancia, visitados) + 1;
         visitados[u-1] = 1;
         std::vector<int> vizinhos_de_u = vizinhos(u);
@@ -242,7 +235,7 @@ void Grafo::dijkstra(int s)
             }
         }
     }
-
+    // Imprimir os caminhos 
     std::map<int, std::vector<int>> caminhos;
     for (int dest = 0; dest < vertices.size(); dest++) {
         std::deque<int> caminho; // caminho ate o destino atual da iteração
@@ -253,7 +246,6 @@ void Grafo::dijkstra(int s)
             int& front = (predecessores[atual]);
             atual = front-1;
         }
-
         std::cout << (dest+1) << ": ";
         for (int v: caminho) {
             std::cout << v << ",";

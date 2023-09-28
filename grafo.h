@@ -31,18 +31,16 @@ class Grafo
         bool haAresta(int u, int v);
         int peso(int u, int v);
 
-
         // algoritmos:
         // item 2:
         void buscaLargura(int origem);
 
-        // item 3
-        std::tuple<bool, std::vector<int>> buscaSubciclo(int v);
-        std::tuple<bool, std::vector<int>> hierholzer();
-
         // item 4
         void dijkstra(int origem);
         int encontrarDistanciaMinima(std::vector<int>& distancia, std::vector<int>& visitados);
+
+        // item 5
+        void floyd_warshall();
     private:
         std::vector<std::pair<int, int>> vertices; // vetor de pares <indice, rotulo>
         std::vector<Aresta*> arestas; // vetor de ponteiros para arestas
