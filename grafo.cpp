@@ -2,6 +2,7 @@
 #include <fstream>
 #include <algorithm>
 #include <limits>
+#include <bits/stdc++.h>
 
 
 // construtor, lê o arquivo
@@ -34,17 +35,31 @@ Grafo::Grafo(char *nome_arquivo)
 
             if (le_vertice == true) {
                 // adiciona vertice ao grafo
-                std::pair<int, int> vertice( linha.front()-48, linha.back()-48 );  // subtrai 48 porque characteres em c++ tem indice '0' para 48, '1' para 49, etc.
+                std::string s;
+                std::stringstream ss(linha);
+            
+                std::vector<std::string> v;
+                while (getline(ss, s, ' ')) {
+                    v.push_back(s);
+                }
+                std::pair<int, int> vertice( std::stoi(v[0]), std::stoi(v[1]));  
                 vertices.push_back(vertice);
             }
 
             if (le_aresta == true) {
                 // adiciona aresta ao grafo
+                std::string s;
+                std::stringstream ss(linha);
+            
+                std::vector<std::string> v;
+                while (getline(ss, s, ' ')) {
+                    v.push_back(s);
+                }
                 //std::pair<int, int> aresta( linha.substr(0, 3).front()-48, linha.substr(0, 3).back()-48 );
                 Aresta *aresta = new Aresta();
-                aresta->vertice1 = linha.substr(0, 3).front()-48;
-                aresta->vertice2 = linha.substr(0, 3).back()-48;
-                aresta->peso = std::stoi(linha.substr(4));
+                aresta->vertice1 = std::stoi(v[0]);
+                aresta->vertice2 = std::stoi(v[1]);
+                aresta->peso = std::stoi(v[2]);
                 arestas.push_back(aresta);
             }
         }
